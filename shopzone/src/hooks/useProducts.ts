@@ -52,3 +52,32 @@ export const useCategories = () => {
 
   return { categories, loading }
 }
+
+export const useProductsByCategory = (category: string) => {
+    const [products, setProducts] = useState<Product[]>([])
+    const [loading, setLoading] = useState(true)
+    const [error, setError] = useState<string | null>(null)
+  
+    useEffect(() => {
+      const fetchProducts = async () => {
+        try {
+          setLoading(true)
+          const url = category && category !== "all"
+            ? `https://fakestoreapi.com/products/category/${category}`
+            : `https://fakestoreapi.com/products`
+          const response = await fetch(url)
+          if (!response.ok) throw new Error("Failed to fetch products")
+          const data = await response.json()
+          setProducts(data)
+        } catch (err) {
+          setError("Failed to load products. Please try again.")
+        } finally {
+          setLoading(false)
+        }
+      }
+  
+      fetchProducts()
+    }, [category])
+  
+    return { products, loading, error }
+  }
