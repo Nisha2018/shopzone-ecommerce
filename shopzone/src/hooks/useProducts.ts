@@ -81,3 +81,30 @@ export const useProductsByCategory = (category: string) => {
   
     return { products, loading, error }
   }
+
+
+  export const useProduct = (id: string) => {
+    const [product, setProduct] = useState<Product | null>(null)
+    const [loading, setLoading] = useState(true)
+    const [error, setError] = useState<string | null>(null)
+  
+    useEffect(() => {
+      const fetchProduct = async () => {
+        try {
+          setLoading(true)
+          const response = await fetch(`https://fakestoreapi.com/products/${id}`)
+          if (!response.ok) throw new Error("Product not found")
+          const data = await response.json()
+          setProduct(data)
+        } catch (err) {
+          setError("Failed to load product. Please try again.")
+        } finally {
+          setLoading(false)
+        }
+      }
+  
+      if (id) fetchProduct()
+    }, [id])
+  
+    return { product, loading, error }
+  }
